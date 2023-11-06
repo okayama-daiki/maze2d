@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2d-maze</title>
+    <style>
+      html {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+    </style>
+    <script>
+      if (!window.DeviceOrientationEvent.absolute) {
+        console.warn("DeviceOrientationEvent is not supported");
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <canvas id="canvas"></canvas>
+    </main>
+    <div id="coordinates"></div>
+    <script>
+      var maze = `
+        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+        1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	1
+        1	0	0	1	1	1	1	1	1	1	1	0	1	1	1	1	0	1	0	1	1	1	0	1	0	1
+        1	0	0	1	0	0	0	0	0	0	0	0	1	1	1	1	0	1	0	1	1	1	0	1	0	1
+        1	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1	0	1	0	1	1	1	0	0	0	1
+        1	1	0	1	0	1	1	1	1	1	0	0	0	0	0	1	0	1	0	1	1	1	1	1	0	1
+        1	0	0	1	0	1	1	1	1	1	0	1	1	1	0	1	0	1	0	1	0	0	0	1	0	1
+        1	0	1	1	0	0	0	0	1	1	0	1	0	0	0	1	0	1	0	0	0	0	0	1	0	1
+        1	0	1	1	1	1	1	0	1	1	0	1	1	1	1	1	0	1	0	1	0	0	0	1	0	1
+        1	0	1	1	1	1	1	0	1	1	0	0	0	0	0	0	0	1	0	1	0	0	0	1	0	1
+        1	0	0	0	0	0	0	0	1	1	1	1	0	1	1	1	1	1	0	1	0	0	0	1	1	1
+        1	1	1	1	1	0	1	1	1	1	1	1	0	1	1	0	0	0	0	1	0	0	0	0	0	1
+        1	0	1	1	1	0	0	0	0	0	0	0	0	1	1	0	1	1	1	1	1	1	1	1	0	1
+        1	0	1	1	1	1	0	1	1	1	1	1	1	1	1	0	0	0	0	0	0	0	0	0	0	1
+        1	0	0	0	0	0	0	1	0	0	0	1	1	1	1	0	0	0	1	1	1	1	1	1	1	1
+        1	1	0	1	1	1	1	1	0	1	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	1
+        1	1	0	1	1	1	1	1	0	1	0	1	1	0	1	1	1	1	0	1	1	1	1	1	0	1
+        1	1	0	1	1	1	1	1	0	1	0	0	0	0	1	1	0	0	0	1	1	1	1	1	0	1
+        1	1	0	0	0	0	0	0	0	1	1	1	1	1	1	0	0	1	0	0	0	0	0	0	0	1
+        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+      `;
+      var mazeArray = maze
+        .trim()
+        .split("\n")
+        .map((row) => row.trim().split("\t"));
+    </script>
+    <script>
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      var cellSize = 20;
+      var ballRadius = cellSize / 3;
+      var rows = mazeArray.length;
+      var cols = mazeArray[0].length;
+      var width = cellSize * cols;
+      var height = cellSize * rows;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      var player = {
+        x: 1 * cellSize + cellSize / 2,
+        y: 1 * cellSize + cellSize / 2,
+      };
+
+      console.log(player);
+
+      function drawMaze() {
+        for (var row = 0; row < rows; row++) {
+          for (var col = 0; col < cols; col++) {
+            var cell = mazeArray[row][col];
+            var x = col * cellSize;
+            var y = row * cellSize;
+
+            if (cell === "1") {
+              ctx.fillStyle = "black";
+              ctx.fillRect(x, y, cellSize, cellSize);
+            }
+          }
+        }
+      }
+
+      function drawBall() {
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function handleKeyDown(event) {
+        var key = event.key;
+        var newX = player.x;
+        var newY = player.y;
+
+        if (key == "ArrowUp") {
+          newY -= 1;
+        } else if (key == "ArrowDown") {
+          newY += 1;
+        } else if (key == "ArrowLeft") {
+          newX -= 1;
+        } else if (key == "ArrowRight") {
+          newX += 1;
+        }
+
+        const direction = [
+          [0, 1],
+          [0, -1],
+          [1, 0],
+          [-1, 0],
+        ];
+
+        for (let i = 0; i < 4; i++) {
+          const dx = direction[i][0];
+          const dy = direction[i][1];
+          const x = newX + dx * (ballRadius - 1);
+          const y = newY + dy * (ballRadius - 1);
+
+          const img = ctx.getImageData(x, y, 1, 1).data;
+          if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
+            console.log("collision", x, y);
+            return;
+          }
+        }
+
+        player.x = newX;
+        player.y = newY;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawBall();
+        drawMaze();
+      }
+
+      function handleOrientation(event) {
+        const gamma = event.gamma;
+        const beta = event.beta;
+
+        ballPosition.x += gamma;
+        ballPosition.y += beta;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawMaze();
+        drawBall(ballPosition.x, ballPosition.y);
+      }
+
+      drawBall();
+      drawMaze();
+
+      window.addEventListener("deviceorientation", handleOrientation);
+      window.addEventListener("keydown", handleKeyDown);
+
+      // debug
+      const coordinatesDiv = document.getElementById("coordinates");
+      canvas.addEventListener("mousemove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        coordinatesDiv.textContent = `X: ${x}, Y: ${y}`;
+      });
+    </script>
+  </body>
+</html>
