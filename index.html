@@ -13,9 +13,7 @@
       }
     </style>
     <script>
-      if (!window.DeviceOrientationEvent.absolute) {
-        alert("DeviceOrientationEvent is not supported, enjoy with keyboard");
-      }
+      DeviceOrientationEvent.requestPermission();
     </script>
   </head>
   <body>
@@ -51,6 +49,7 @@
         .split("\n")
         .map((row) => row.trim().split("\t"));
     </script>
+
     <script>
       var canvas = document.getElementById("canvas");
       var ctx = canvas.getContext("2d", { willReadFrequently: true });
