@@ -140,8 +140,31 @@
         const gamma = event.gamma;
         const beta = event.beta;
 
-        player.x += gamma / 10;
-        player.y += beta / 10;
+        const newX = player.x + gamma / 10;
+        const newY = player.y + beta / 10;
+
+        const direction = [
+          [0, 1],
+          [0, -1],
+          [1, 0],
+          [-1, 0],
+        ];
+
+        for (let i = 0; i < 4; i++) {
+          const dx = direction[i][0];
+          const dy = direction[i][1];
+          const x = newX + dx * (ballRadius - 1);
+          const y = newY + dy * (ballRadius - 1);
+
+          const img = ctx.getImageData(x, y, 1, 1).data;
+          if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
+            console.log("collision", x, y);
+            return;
+          }
+        }
+
+        player.x = newX;
+        player.y = newY;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
