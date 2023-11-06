@@ -12,15 +12,7 @@
         height: 100vh;
       }
     </style>
-    <script>
-      DeviceOrientationEvent.requestPermission()
-        .then((res) => {
-          if (res === "granted") {
-            window.addEventListener("deviceorientation", handleOrientation);
-          }
-        })
-        .catch(console.error);
-    </script>
+    <script></script>
   </head>
   <body>
     <main>
@@ -147,19 +139,27 @@
         const gamma = event.gamma;
         const beta = event.beta;
 
-        player.x += gamma;
-        player.y += beta;
+        player.x += gamma / 10;
+        player.y += beta / 10;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        drawMaze();
         drawBall();
+        drawMaze();
       }
 
       drawBall();
       drawMaze();
 
       window.addEventListener("keydown", handleKeyDown);
+
+      DeviceOrientationEvent.requestPermission()
+        .then((res) => {
+          if (res === "granted") {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        })
+        .catch(console.error);
 
       // debug
       const coordinatesDiv = document.getElementById("coordinates");
