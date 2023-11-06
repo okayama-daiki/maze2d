@@ -12,7 +12,9 @@
         height: 100vh;
       }
     </style>
-    <script></script>
+    <script>
+      screen.orientation.lock("landscape-primary");
+    </script>
   </head>
   <body>
     <main>
@@ -140,14 +142,8 @@
         let beta = event.beta;
         let gamma = event.gamma;
 
-        if (window.matchMedia("(orientation: portrait)")) {
-          const temp = gamma;
-          gamma = beta;
-          beta = temp;
-        }
-
-        const newX = player.x + beta / 10;
-        const newY = player.y - gamma / 10;
+        const newX = player.x - beta / 10;
+        const newY = player.y + gamma / 10;
 
         const direction = [
           [0, 1],
