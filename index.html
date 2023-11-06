@@ -286,14 +286,15 @@
       });
     </script>
     <script>
-      let collisionCount = 0;
-      let time = 0;
-      let isPlaying = false;
+      const info = {
+        time: 0,
+        collisionCount: 0,
+      };
       let interval;
 
       function init() {
-        collisionCount = 0;
-        time = 0;
+        info.collisionCount = 0;
+        info.time = 0;
         ball.x = 1 * cellSize + cellSize / 2;
         ball.y = 1 * cellSize + cellSize / 2;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -306,14 +307,16 @@
         init();
         interval && clearInterval(interval);
         interval = setInterval(() => {
-          time++;
-          document.getElementById("time").textContent = `time: ${time}`;
+          document.getElementById("time").textContent = `time: ${info.time++}`;
           document.getElementById(
             "collision-count"
-          ).textContent = `collision: ${collisionCount}`;
+          ).textContent = `collision: ${info.collisionCount}`;
           if (isGoal()) {
             clearInterval(interval);
-            alert("goal! score: ", 10000 / time + collisionCount * 5);
+            alert(
+              "goal! score: ",
+              10000 / (info.time + info.collisionCount * 5)
+            );
           }
         }, 100);
       }
