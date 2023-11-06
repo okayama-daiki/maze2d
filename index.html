@@ -6,10 +6,63 @@
     <title>2d-maze</title>
     <style>
       html {
+        background-color: whitesmoke;
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: row;
         height: 100vh;
+      }
+      main {
+        display: flex;
+        position: relative;
+      }
+      #enable-gyroscope {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(15px * 26);
+        height: calc(15px * 20);
+        z-index: 2;
+      }
+      #canvas {
+        z-index: 1;
+      }
+      #controller {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 170px;
+        height: 170px;
+        #up,
+        #down,
+        #left,
+        #right {
+          width: 50px;
+          height: 50px;
+        }
+        #up {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 50%;
+        }
+        #left {
+          border-top-left-radius: 50%;
+          border-bottom-left-radius: 50%;
+        }
+        #right {
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+        }
+        #down {
+          border-bottom-left-radius: 50%;
+          border-bottom-right-radius: 50%;
+        }
+      }
+      #container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
       }
     </style>
     <script>
@@ -18,8 +71,27 @@
   </head>
   <body>
     <main>
-      <button id="button">Enable gyroscope</button>
+      <button id="enable-gyroscope">click to enable gyroscope</button>
       <canvas id="canvas"></canvas>
+      <div id="container">
+        <div id="infomation-container">
+          <div id="time">time: -</div>
+          <div id="collision-count">collision: 0</div>
+        </div>
+        <div id="controller-container">
+          <div id="controller">
+            <div></div>
+            <button id="up">up</button>
+            <div></div>
+            <button id="left">left</button>
+            <button id="start">start</button>
+            <button id="right">right</button>
+            <div></div>
+            <button id="down">down</button>
+            <div></div>
+          </div>
+        </div>
+      </div>
     </main>
     <script>
       var maze = `
@@ -69,8 +141,6 @@
         y: 1 * cellSize + cellSize / 2,
       };
 
-      console.log(player);
-
       function drawMaze() {
         for (var row = 0; row < rows; row++) {
           for (var col = 0; col < cols; col++) {
@@ -93,6 +163,29 @@
         ctx.fill();
       }
 
+      function detectCollision(x, y) {
+        const direction = [
+          [0, 1],
+          [0, -1],
+          [1, 0],
+          [-1, 0],
+        ];
+
+        for (let i = 0; i < 4; i++) {
+          const dx = direction[i][0];
+          const dy = direction[i][1];
+          const nx = x + dx * (ballRadius - 1);
+          const ny = y + dy * (ballRadius - 1);
+
+          const img = ctx.getImageData(nx, ny, 1, 1).data;
+          if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
+            console.error("collision", nx, ny);
+            return true;
+          }
+        }
+        return false;
+      }
+
       function handleKeyDown(event) {
         var key = event.key;
         var newX = player.x;
@@ -108,24 +201,9 @@
           newX += 1;
         }
 
-        const direction = [
-          [0, 1],
-          [0, -1],
-          [1, 0],
-          [-1, 0],
-        ];
-
-        for (let i = 0; i < 4; i++) {
-          const dx = direction[i][0];
-          const dy = direction[i][1];
-          const x = newX + dx * (ballRadius - 1);
-          const y = newY + dy * (ballRadius - 1);
-
-          const img = ctx.getImageData(x, y, 1, 1).data;
-          if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
-            console.log("collision", x, y);
-            return;
-          }
+        if (detectCollision(newX, newY)) {
+          collisionCount++;
+          return;
         }
 
         player.x = newX;
@@ -147,24 +225,9 @@
         const newX = player.x + beta / 10;
         const newY = player.y - gamma / 10;
 
-        const direction = [
-          [0, 1],
-          [0, -1],
-          [1, 0],
-          [-1, 0],
-        ];
-
-        for (let i = 0; i < 4; i++) {
-          const dx = direction[i][0];
-          const dy = direction[i][1];
-          const x = newX + dx * (ballRadius - 1);
-          const y = newY + dy * (ballRadius - 1);
-
-          const img = ctx.getImageData(x, y, 1, 1).data;
-          if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
-            console.log("collision", x, y);
-            return;
-          }
+        if (detectCollision(newX, newY)) {
+          collisionCount++;
+          return;
         }
 
         player.x = newX;
@@ -181,16 +244,22 @@
 
       window.addEventListener("keydown", handleKeyDown);
 
-      const button = document.getElementById("button");
+      const button = document.getElementById("enable-gyroscope");
+
       button.addEventListener("click", () => {
-        DeviceOrientationEvent.requestPermission()
-          .then((res) => {
-            if (res === "granted") {
-              window.addEventListener("deviceorientation", handleOrientation);
-              button.remove();
-            }
-          })
-          .catch(console.error);
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission()
+            .then((res) => {
+              if (res === "granted") {
+                window.addEventListener("deviceorientation", handleOrientation);
+                button.remove();
+              }
+            })
+            .catch(console.error);
+        } else {
+          window.addEventListener("deviceorientation", handleOrientation);
+        }
+        button.remove();
       });
 
       // debug
@@ -202,6 +271,31 @@
 
       //   coordinatesDiv.textContent = `X: ${x}, Y: ${y}`;
       // });
+    </script>
+    <script>
+      let collisionCount = 0;
+      let time = 0;
+
+      function init() {
+        collisionCount = 0;
+        time = 0;
+      }
+
+      function start() {
+        init();
+        const interval = setInterval(() => {
+          time++;
+          document.getElementById("time").textContent = `time: ${time}`;
+          document.getElementById(
+            "collision-count"
+          ).textContent = `collision: ${collisionCount}`;
+        }, 100);
+      }
+
+      const startButton = document.getElementById("start");
+      startButton.addEventListener("click", () => {
+        start();
+      });
     </script>
   </body>
 </html>
