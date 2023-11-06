@@ -142,6 +142,9 @@
         let beta = event.beta;
         let gamma = event.gamma;
 
+        beta = Math.min(Math.max(beta, -45), 45);
+        gamma = Math.min(Math.max(gamma, -45), 45);
+
         const newX = player.x + beta / 10;
         const newY = player.y - gamma / 10;
 
