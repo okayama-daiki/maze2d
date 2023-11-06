@@ -16,6 +16,7 @@
   </head>
   <body>
     <main>
+      <button id="button">Enable gyroscope</button>
       <canvas id="canvas"></canvas>
     </main>
     <div id="coordinates"></div>
@@ -153,13 +154,17 @@
 
       window.addEventListener("keydown", handleKeyDown);
 
-      DeviceOrientationEvent.requestPermission()
-        .then((res) => {
-          if (res === "granted") {
-            window.addEventListener("deviceorientation", handleOrientation);
-          }
-        })
-        .catch(console.error);
+      const button = document.getElementById("button");
+      button.addEventListener("click", () => {
+        DeviceOrientationEvent.requestPermission()
+          .then((res) => {
+            if (res === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation);
+              button.remove();
+            }
+          })
+          .catch(console.error);
+      });
 
       // debug
       const coordinatesDiv = document.getElementById("coordinates");
