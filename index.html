@@ -21,7 +21,6 @@
       <button id="button">Enable gyroscope</button>
       <canvas id="canvas"></canvas>
     </main>
-    <div id="coordinates"></div>
     <script>
       var maze = `
         1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
@@ -55,7 +54,7 @@
       var canvas = document.getElementById("canvas");
       var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-      var cellSize = 20;
+      var cellSize = 15;
       var ballRadius = cellSize / 3;
       var rows = mazeArray.length;
       var cols = mazeArray[0].length;
@@ -195,14 +194,14 @@
       });
 
       // debug
-      const coordinatesDiv = document.getElementById("coordinates");
-      canvas.addEventListener("mousemove", (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+      // const coordinatesDiv = document.getElementById("coordinates");
+      // canvas.addEventListener("mousemove", (e) => {
+      //   const rect = canvas.getBoundingClientRect();
+      //   const x = e.clientX - rect.left;
+      //   const y = e.clientY - rect.top;
 
-        coordinatesDiv.textContent = `X: ${x}, Y: ${y}`;
-      });
+      //   coordinatesDiv.textContent = `X: ${x}, Y: ${y}`;
+      // });
     </script>
   </body>
 </html>
