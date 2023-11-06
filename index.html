@@ -14,7 +14,7 @@
     </style>
     <script>
       if (!window.DeviceOrientationEvent.absolute) {
-        console.warn("DeviceOrientationEvent is not supported");
+        alert("DeviceOrientationEvent is not supported, enjoy with keyboard");
       }
     </script>
   </head>
@@ -154,7 +154,9 @@
       drawBall();
       drawMaze();
 
-      window.addEventListener("deviceorientation", handleOrientation);
+      window.addEventListener("load", () => {
+        window.addEventListener("deviceorientation", handleOrientation);
+      });
       window.addEventListener("keydown", handleKeyDown);
 
       // debug
