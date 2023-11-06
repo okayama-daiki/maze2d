@@ -13,7 +13,13 @@
       }
     </style>
     <script>
-      DeviceOrientationEvent.requestPermission();
+      DeviceOrientationEvent.requestPermission()
+        .then((res) => {
+          if (res === "granted") {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        })
+        .catch(console.error);
     </script>
   </head>
   <body>
@@ -153,9 +159,6 @@
       drawBall();
       drawMaze();
 
-      window.addEventListener("load", () => {
-        window.addEventListener("deviceorientation", handleOrientation);
-      });
       window.addEventListener("keydown", handleKeyDown);
 
       // debug
