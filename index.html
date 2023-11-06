@@ -240,8 +240,8 @@
         let beta = event.beta;
         let gamma = event.gamma;
 
-        beta = Math.min(Math.max(beta, -20), 20);
-        gamma = Math.min(Math.max(gamma, -20), 20);
+        beta = Math.min(Math.max(beta, -15), 15);
+        gamma = Math.min(Math.max(gamma, -15), 15);
 
         const newX = ball.x + beta / 10;
         const newY = ball.y - gamma / 10;
@@ -314,8 +314,7 @@
           if (isGoal()) {
             clearInterval(interval);
             alert(
-              "goal! score: ",
-              10000 / (info.time + info.collisionCount * 5)
+              `goal! score: ${10000 / (info.time + info.collisionCount * 5)}`
             );
           }
         }, 100);
