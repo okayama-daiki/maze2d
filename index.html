@@ -63,6 +63,7 @@
         flex-direction: column;
         justify-content: space-between;
         padding: 20px;
+        margin-left: 40px;
       }
     </style>
     <script>
@@ -136,10 +137,29 @@
       canvas.width = width;
       canvas.height = height;
 
-      var player = {
+      var ball = {
         x: 1 * cellSize + cellSize / 2,
         y: 1 * cellSize + cellSize / 2,
       };
+
+      var goal = {
+        x: (cols - 2) * cellSize + cellSize / 2,
+        y: (rows - 2) * cellSize + cellSize / 2,
+      };
+
+      function drawGoal() {
+        ctx.fillStyle = "green";
+        ctx.beginPath();
+        ctx.arc(goal.x, goal.y, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function isGoal() {
+        const dx = ball.x - goal.x;
+        const dy = ball.y - goal.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance < ballRadius * 2;
+      }
 
       function drawMaze() {
         for (var row = 0; row < rows; row++) {
@@ -159,7 +179,7 @@
       function drawBall() {
         ctx.fillStyle = "red";
         ctx.beginPath();
-        ctx.arc(player.x, player.y, ballRadius, 0, Math.PI * 2);
+        ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -179,7 +199,7 @@
 
           const img = ctx.getImageData(nx, ny, 1, 1).data;
           if (img[0] === 0 && img[1] === 0 && img[2] === 0) {
-            console.error("collision", nx, ny);
+            console.info("collision", nx, ny);
             return true;
           }
         }
@@ -188,8 +208,8 @@
 
       function handleKeyDown(event) {
         var key = event.key;
-        var newX = player.x;
-        var newY = player.y;
+        var newX = ball.x;
+        var newY = ball.y;
 
         if (key == "ArrowUp") {
           newY -= 1;
@@ -206,12 +226,13 @@
           return;
         }
 
-        player.x = newX;
-        player.y = newY;
+        ball.x = newX;
+        ball.y = newY;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawBall();
+        drawGoal();
         drawMaze();
       }
 
@@ -222,24 +243,26 @@
         beta = Math.min(Math.max(beta, -20), 20);
         gamma = Math.min(Math.max(gamma, -20), 20);
 
-        const newX = player.x + beta / 10;
-        const newY = player.y - gamma / 10;
+        const newX = ball.x + beta / 10;
+        const newY = ball.y - gamma / 10;
 
         if (detectCollision(newX, newY)) {
           collisionCount++;
           return;
         }
 
-        player.x = newX;
-        player.y = newY;
+        ball.x = newX;
+        ball.y = newY;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawBall();
+        drawGoal();
         drawMaze();
       }
 
       drawBall();
+      drawGoal();
       drawMaze();
 
       window.addEventListener("keydown", handleKeyDown);
@@ -261,40 +284,44 @@
         }
         button.remove();
       });
-
-      // debug
-      // const coordinatesDiv = document.getElementById("coordinates");
-      // canvas.addEventListener("mousemove", (e) => {
-      //   const rect = canvas.getBoundingClientRect();
-      //   const x = e.clientX - rect.left;
-      //   const y = e.clientY - rect.top;
-
-      //   coordinatesDiv.textContent = `X: ${x}, Y: ${y}`;
-      // });
     </script>
     <script>
       let collisionCount = 0;
       let time = 0;
+      let isPlaying = false;
+      let interval;
 
       function init() {
         collisionCount = 0;
         time = 0;
+        ball.x = 1 * cellSize + cellSize / 2;
+        ball.y = 1 * cellSize + cellSize / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBall();
+        drawGoal();
+        drawMaze();
       }
 
       function start() {
         init();
-        const interval = setInterval(() => {
+        interval && clearInterval(interval);
+        interval = setInterval(() => {
           time++;
           document.getElementById("time").textContent = `time: ${time}`;
           document.getElementById(
             "collision-count"
           ).textContent = `collision: ${collisionCount}`;
+          if (isGoal()) {
+            clearInterval(interval);
+            alert("goal! score: ", 10000 / time + collisionCount * 5);
+          }
         }, 100);
       }
 
       const startButton = document.getElementById("start");
       startButton.addEventListener("click", () => {
         start();
+        startButton.innerText = "reset";
       });
     </script>
   </body>
