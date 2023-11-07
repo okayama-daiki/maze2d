@@ -66,9 +66,6 @@
         margin-left: 40px;
       }
     </style>
-    <script>
-      screen.orientation.lock("landscape-primary");
-    </script>
   </head>
   <body>
     <main>
@@ -270,12 +267,15 @@
       const button = document.getElementById("enable-gyroscope");
 
       button.addEventListener("click", () => {
-        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        if (typeof DeviceOrientationEvent === undefined) {
+          alert("your device does not support gyroscope");
+        } else if (
+          typeof DeviceOrientationEvent.requestPermission === "function"
+        ) {
           DeviceOrientationEvent.requestPermission()
             .then((res) => {
               if (res === "granted") {
                 window.addEventListener("deviceorientation", handleOrientation);
-                button.remove();
               }
             })
             .catch(console.error);
