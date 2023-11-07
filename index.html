@@ -222,7 +222,7 @@
         }
 
         if (detectCollision(newX, newY)) {
-          collisionCount++;
+          info.collisionCount++;
           return;
         }
 
@@ -247,7 +247,7 @@
         const newY = ball.y - gamma / 10;
 
         if (detectCollision(newX, newY)) {
-          collisionCount++;
+          info.collisionCount++;
           return;
         }
 
@@ -314,7 +314,9 @@
           if (isGoal()) {
             clearInterval(interval);
             alert(
-              `goal! score: ${10000 / (info.time + info.collisionCount * 5)}`
+              `Goal!! score: ${Math.Round(
+                10000 / (info.time + info.collisionCount * 5)
+              )}`
             );
           }
         }, 100);
@@ -323,7 +325,7 @@
       const startButton = document.getElementById("start");
       startButton.addEventListener("click", () => {
         start();
-        startButton.innerText = "reset";
+        startButton.innerText = "restart";
       });
     </script>
   </body>
