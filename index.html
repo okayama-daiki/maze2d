@@ -46,6 +46,16 @@
         margin-left: 40px;
       }
     </style>
+    <script>
+      if (
+        screen.orientation.type === "portrait-primary" ||
+        screen.orientation.type === "portrait-secondary"
+      ) {
+        alert("please use landscape mode");
+      } else if (screen.orientation.type === "landscape-secondary") {
+        alert("please rotate your device");
+      }
+    </script>
   </head>
   <body>
     <main>
