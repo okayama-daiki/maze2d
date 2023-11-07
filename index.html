@@ -355,6 +355,8 @@
           document.getElementById(
             "collision-count"
           ).textContent = `collision: ${collisionCount}`;
+        }, 100);
+        const watcher = setInterval(() => {
           if (isGoal()) {
             alert(
               `Goal!! score: ${Math.Round(10000 / (time + collisionCount * 5))}`
