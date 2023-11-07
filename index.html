@@ -335,7 +335,6 @@
       let time = 0;
       let collisionCount = 0;
       let interval;
-      let goalWatchInterval;
 
       function init() {
         collisionCount = 0;
@@ -357,11 +356,9 @@
             "collision-count"
           ).textContent = `collision: ${collisionCount}`;
         }, 100);
-        goalWatchInterval && clearInterval(goalWatchInterval);
-        goalWatchInterval = setInterval(() => {
+        const goalWatchInterval = setInterval(() => {
           if (isGoal()) {
             clearInterval(interval);
-            clearInterval(goalWatchInterval);
             alert(
               `Goal!! score: ${Math.Round(10000 / (time + collisionCount * 5))}`
             );
