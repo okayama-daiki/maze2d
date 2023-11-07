@@ -231,8 +231,8 @@
         let beta = event.beta;
         let gamma = event.gamma;
 
-        beta = Math.min(Math.max(beta, -15), 15);
-        gamma = Math.min(Math.max(gamma, -15), 15);
+        beta = Math.min(Math.max(beta, -10), 10);
+        gamma = Math.min(Math.max(gamma, -10), 10);
 
         const newX = ball.x + beta / 10;
         const newY = ball.y - gamma / 10;
@@ -297,7 +297,7 @@
 
         ctx2.fillStyle = "rgba(220, 220, 220, 0.8)";
         ctx2.beginPath();
-        ctx2.arc(75, 75, 50, 0, Math.PI * 2);
+        ctx2.arc(75, 75, 40, 0, Math.PI * 2);
         ctx2.fill();
 
         ctx2.fillStyle = "rgba(240, 240, 240, 0.5)";
@@ -317,8 +317,8 @@
         let beta = event.beta;
         let gamma = event.gamma;
 
-        beta = Math.min(Math.max(beta, -15), 15);
-        gamma = Math.min(Math.max(gamma, -15), 15);
+        beta = Math.min(Math.max(beta, -10), 10);
+        gamma = Math.min(Math.max(gamma, -10), 10);
 
         const newX = 75 + beta * 3;
         const newY = 75 - gamma * 3;
