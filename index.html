@@ -65,6 +65,9 @@
         padding: 20px;
         margin-left: 40px;
       }
+      #controller-container {
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -72,11 +75,12 @@
       <button id="enable-gyroscope">click to enable gyroscope</button>
       <canvas id="canvas"></canvas>
       <div id="container">
-        <div id="infomation-container">
+        <div id="ation-container">
           <div id="time">time: -</div>
           <div id="collision-count">collision: 0</div>
         </div>
         <div id="controller-container">
+          <button id="start">start</button>
           <canvas id="controller"></canvas>
         </div>
       </div>
@@ -209,7 +213,7 @@
         }
 
         if (detectCollision(newX, newY)) {
-          info.collisionCount++;
+          collisionCount++;
           return;
         }
 
@@ -234,7 +238,7 @@
         const newY = ball.y - gamma / 10;
 
         if (detectCollision(newX, newY)) {
-          info.collisionCount++;
+          collisionCount++;
           return;
         }
 
@@ -309,12 +313,6 @@
         ctx2.fill();
       }
 
-      function drawController() {
-        ctx2.clearRect(0, 0, controller.width, controller.height);
-        drawBoard();
-        drawCircle(75, 75);
-      }
-
       function handleOrientationController(event) {
         let beta = event.beta;
         let gamma = event.gamma;
@@ -325,22 +323,22 @@
         const newX = 75 + beta * 3;
         const newY = 75 - gamma * 3;
 
-        drawController();
+        ctx2.clearRect(0, 0, controller.width, controller.height);
+        drawBoard();
         drawCircle(newX, newY);
       }
 
-      drawController();
+      drawBoard();
+      drawCircle(75, 75);
     </script>
     <script>
-      const info = {
-        time: 0,
-        collisionCount: 0,
-      };
+      let time = 0;
+      let collisionCount = 0;
       let interval;
 
       function init() {
-        info.collisionCount = 0;
-        info.time = 0;
+        collisionCount = 0;
+        time = 0;
         ball.x = 1 * cellSize + cellSize / 2;
         ball.y = 1 * cellSize + cellSize / 2;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -353,15 +351,13 @@
         init();
         interval && clearInterval(interval);
         interval = setInterval(() => {
-          document.getElementById("time").textContent = `time: ${info.time++}`;
+          document.getElementById("time").textContent = `time: ${time++}`;
           document.getElementById(
             "collision-count"
-          ).textContent = `collision: ${info.collisionCount}`;
+          ).textContent = `collision: ${collisionCount}`;
           if (isGoal()) {
             alert(
-              `Goal!! score: ${Math.Round(
-                10000 / (info.time + info.collisionCount * 5)
-              )}`
+              `Goal!! score: ${Math.Round(10000 / (time + collisionCount * 5))}`
             );
             clearInterval(interval);
           }
