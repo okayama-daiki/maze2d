@@ -77,17 +77,7 @@
           <div id="collision-count">collision: 0</div>
         </div>
         <div id="controller-container">
-          <div id="controller">
-            <div></div>
-            <button id="up">up</button>
-            <div></div>
-            <button id="left">left</button>
-            <button id="start">start</button>
-            <button id="right">right</button>
-            <div></div>
-            <button id="down">down</button>
-            <div></div>
-          </div>
+          <canvas id="controller"></canvas>
         </div>
       </div>
     </main>
@@ -275,15 +265,71 @@
           DeviceOrientationEvent.requestPermission()
             .then((res) => {
               if (res === "granted") {
-                window.addEventListener("deviceorientation", handleOrientation);
+                window.addEventListener("deviceorientation", (event) => {
+                  handleOrientation(event), handleOrientationController(event);
+                });
               }
             })
             .catch(console.error);
         } else {
-          window.addEventListener("deviceorientation", handleOrientation);
+          window.addEventListener("deviceorientation", (event) => {
+            handleOrientation(event), handleOrientationController(event);
+          });
         }
         button.remove();
       });
+    </script>
+    <script>
+      const controller = document.getElementById("controller");
+      const ctx2 = controller.getContext("2d");
+
+      controller.width = 150;
+      controller.height = 150;
+
+      function drawBoard() {
+        ctx2.beginPath();
+        ctx2.fillStyle = "#000";
+        ctx2.rect(0, 0, controller.width, controller.height);
+
+        ctx2.fillStyle = "rgba(220, 220, 220, 0.8)";
+        ctx2.beginPath();
+        ctx2.arc(75, 75, 50, 0, Math.PI * 2);
+        ctx2.fill();
+
+        ctx2.fillStyle = "rgba(240, 240, 240, 0.5)";
+        ctx2.beginPath();
+        ctx2.arc(75, 75, 25, 0, Math.PI * 2);
+        ctx2.fill();
+      }
+
+      function drawCircle(x, y) {
+        ctx2.fillStyle = "red";
+        ctx2.beginPath();
+        ctx2.arc(x, y, 5, 0, Math.PI * 2);
+        ctx2.fill();
+      }
+
+      function drawController() {
+        ctx2.clearRect(0, 0, controller.width, controller.height);
+        drawBoard();
+        drawCircle(75, 75);
+      }
+
+      function handleOrientationController(event) {
+        let beta = event.beta;
+        let gamma = event.gamma;
+
+        beta = Math.min(Math.max(beta, -15), 15);
+        gamma = Math.min(Math.max(gamma, -15), 15);
+
+        const newX = 75 + beta * 3;
+        const newY = 75 - gamma * 3;
+
+        drawController();
+        drawCircle(newX, newY);
+      }
+
+      drawController();
     </script>
     <script>
       const info = {
