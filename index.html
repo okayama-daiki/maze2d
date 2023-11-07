@@ -49,7 +49,7 @@
   </head>
   <body>
     <main>
-      <button id="enable-gyroscope">click to enable gyroscope</button>
+      <button id="enable-gyroscope">Firstly, click to enable gyroscope</button>
       <canvas id="canvas"></canvas>
       <div id="container">
         <div id="ation-container">
@@ -274,13 +274,18 @@
 
         ctx2.fillStyle = "rgba(220, 220, 220, 0.8)";
         ctx2.beginPath();
-        ctx2.arc(75, 75, 40, 0, Math.PI * 2);
+        ctx2.arc(75, 75, 35, 0, Math.PI * 2);
         ctx2.fill();
 
         ctx2.fillStyle = "rgba(240, 240, 240, 0.5)";
         ctx2.beginPath();
-        ctx2.arc(75, 75, 25, 0, Math.PI * 2);
+        ctx2.arc(75, 75, 20, 0, Math.PI * 2);
         ctx2.fill();
+
+        // write text
+        ctx2.fillStyle = "#000";
+        ctx2.font = "13px Arial";
+        ctx2.fillText("gyro sensor", 43, 130);
       }
 
       function drawCircle(x, y) {
