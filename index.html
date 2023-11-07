@@ -312,12 +312,12 @@
             "collision-count"
           ).textContent = `collision: ${info.collisionCount}`;
           if (isGoal()) {
-            clearInterval(interval);
             alert(
               `Goal!! score: ${Math.Round(
                 10000 / (info.time + info.collisionCount * 5)
               )}`
             );
+            clearInterval(interval);
           }
         }, 100);
       }
